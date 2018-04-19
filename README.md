@@ -2,7 +2,7 @@
 
 ## Installation
 
-```javascript
+```
 npm install roboulbricht/mysql-functions
 ```
 
@@ -30,3 +30,6 @@ db.connect()
         console.log(error.message);
     });
 ```
+### Function: execute
+
+### Function: identity
