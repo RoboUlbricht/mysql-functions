@@ -44,7 +44,7 @@ module.exports = class TDatabase {
           });
     }
 
-    identity() {
+    get identity() {
         return this.last_identity;
     }
 }
