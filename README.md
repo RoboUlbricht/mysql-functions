@@ -1,5 +1,5 @@
 # mysql-functions
-A simple wrapper for [tedious](http://github.com/tediousjs/tedious) (TDS driver).
+A simple wrapper for [mysql](https://github.com/mysqljs/mysql) (A pure node.js JavaScript Client implementing the MySql protocol).
 All functions are Promises.
 
 ## Installation
@@ -33,18 +33,18 @@ db.connect()
         console.log(error.message);
     });
 ```
-### Function: execute(sql, param)
+### Function: execute(sql, params)
 Execute the query without returning the result table. Good for insert queries.
  * `sql` {String} The SQL statement to be executed.
- * `param` {Array[]} An array of arrays containing the [parameter definitions](http://tediousjs.github.io/tedious/api-request.html#function_addParameter).
+ * `params` {Array[]} An array of arrays containing the [parameter definitions](https://github.com/mysqljs/mysql#performing-queries).
 
 ### Property: identity
 Return the last identity fro previous execute.
 
-### Function: query(sql, param)
+### Function: query(sql, params)
 Execute the query which returns the result table.
  * `sql` {String} The SQL statement to be executed.
- * `param` {Array[]} An array of arrays containing the [parameter definitions](http://tediousjs.github.io/tedious/api-request.html#function_addParameter).
+ * `params` {Array[]} An array of arrays containing the [parameter definitions](https://github.com/mysqljs/mysql#performing-queries).
 
 ### Property: fields
 Return the fields from last query.
