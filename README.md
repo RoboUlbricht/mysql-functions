@@ -80,7 +80,7 @@ db.connect()
     });
 ```
 ### Function: commitTransaction
-Begin the transaction.
+Commit the transaction.
 
 ### Function: rollbackTransaction
-Begin the transaction.
+Rollback the transaction.
