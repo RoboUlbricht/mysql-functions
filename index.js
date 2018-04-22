@@ -42,10 +42,10 @@ module.exports = class TDatabase {
     ///
     /// Execute query
     ///
-    execute(sql) {
+    execute(sql, params) {
         var self = this;
         return new Promise(function(resolve, reject) {
-            self.connection.query(sql, function(err, results, fields) {
+            self.connection.query(sql, params, function(err, results, fields) {
                 if(err)
                     reject(err);
                 else {
