@@ -87,4 +87,53 @@ module.exports = class TDatabase {
     get fields() {
         return this.last_fields;
     }
+
+    ///
+    /// Begin the transaction
+    ///
+    beginTransaction() {
+        var self = this;
+        return new Promise(function(resolve, reject) {
+            self.connection.beginTransaction(function(err) {
+                if(err)
+                    reject(err);
+                else {
+                    resolve();
+                }
+            });
+        });
+    }
+
+    ///
+    /// Commit the transaction
+    ///
+    commitTransaction() {
+        var self = this;
+        return new Promise(function(resolve, reject) {
+            self.connection.commit(function(err) {
+                if(err)
+                    reject(err);
+                else {
+                    resolve();
+                }
+            });
+        });
+    }
+
+    ///
+    /// Rollback the transaction
+    ///
+    rollbackTransaction() {
+        var self = this;
+        return new Promise(function(resolve, reject) {
+            self.connection.rollback(function(err) {
+                if(err)
+                    reject(err);
+                else {
+                    resolve();
+                }
+            });
+        });
+    }
+
 }
