@@ -9,6 +9,7 @@ module.exports = class TDatabase {
         this.config = config;
         this.connection = undefined;
         this.last_identity = 0;
+        this.last_fields = {}
     }
 
     ///
@@ -53,7 +54,24 @@ module.exports = class TDatabase {
                     resolve(results);
                 }
             });
-          });
+        });
+    }
+
+    ///
+    /// Query
+    ///
+    query(sql, params) {
+        var self = this;
+        return new Promise(function(resolve, reject) {
+            self.connection.query(sql, params, function(err, results, fields) {
+                if(err)
+                    reject(err);
+                else {
+                    self.last_fields = fields;
+                    resolve(results);
+                }
+            });
+        });
     }
 
     ///
@@ -61,5 +79,12 @@ module.exports = class TDatabase {
     ///
     get identity() {
         return this.last_identity;
+    }
+
+    ///
+    /// Get last fields
+    ///
+    get fields() {
+        return this.last_fields;
     }
 }

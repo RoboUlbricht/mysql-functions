@@ -9,6 +9,7 @@ npm install roboulbricht/mysql-functions
 ## class TDatabase
 
 ### Function: connect
+Establishing the connection to the database.
 
 ```javascript
 var Database = require('mysql-functions');
@@ -31,5 +32,13 @@ db.connect()
     });
 ```
 ### Function: execute
+Execute the query without returning the result table. Good for insert queries.
 
-### Function: identity
+### Property: identity
+Return the last identity fro previous execute.
+
+### Function: query
+Execute the query which returns the result table.
+
+### Property: fields
+Return the fields from last query.
