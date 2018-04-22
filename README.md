@@ -1,5 +1,6 @@
 # mysql-functions
 A simple wrapper for [tedious](http://github.com/tediousjs/tedious) (TDS driver).
+All functions are Promises.
 
 ## Installation
 
@@ -9,7 +10,7 @@ npm install roboulbricht/mysql-functions
 
 ## class TDatabase
 
-### Function: connect
+### Function: connect()
 Establishing the connection to the database.
 
 ```javascript
@@ -32,19 +33,23 @@ db.connect()
         console.log(error.message);
     });
 ```
-### Function: execute
+### Function: execute(sql, param)
 Execute the query without returning the result table. Good for insert queries.
+ * `sql` {String} The SQL statement to be executed.
+ * `param` {Array[]} An array of arrays containing the [parameter definitions](http://tediousjs.github.io/tedious/api-request.html#function_addParameter).
 
 ### Property: identity
 Return the last identity fro previous execute.
 
-### Function: query
+### Function: query(sql, param)
 Execute the query which returns the result table.
+ * `sql` {String} The SQL statement to be executed.
+ * `param` {Array[]} An array of arrays containing the [parameter definitions](http://tediousjs.github.io/tedious/api-request.html#function_addParameter).
 
 ### Property: fields
 Return the fields from last query.
 
-### Function: beginTransaction
+### Function: beginTransaction()
 Begin the transaction.
 
 ```javascript
@@ -79,8 +84,8 @@ db.connect()
         console.log(error.message);
     });
 ```
-### Function: commitTransaction
+### Function: commitTransaction()
 Commit the transaction.
 
-### Function: rollbackTransaction
+### Function: rollbackTransaction()
 Rollback the transaction.
