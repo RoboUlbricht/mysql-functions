@@ -3,7 +3,11 @@ A simple wrapper for [mysql](https://github.com/mysqljs/mysql) (A pure node.js J
 All functions are Promises.
 
 ## Installation
-
+From npm.
+```
+npm install mysql-functions
+```
+Or from git.
 ```
 npm install roboulbricht/mysql-functions
 ```
@@ -38,6 +42,35 @@ Execute the query without returning the result table. Good for insert queries.
  * `sql` {String} The SQL statement to be executed.
  * `params` {Array[]} An array of arrays containing the [parameter definitions](https://github.com/mysqljs/mysql#performing-queries).
 
+```javascript
+var Database = require('mysql-functions');
+
+var connection_string = {
+    host: "localhost",
+    user: "root",
+    password: "password",
+    database: "mydb"
+}
+
+var db = new Database(connection_string);
+db.connect()
+    .then(async function() {
+        console.log('connected');
+        await db.execute('create temporary table kiosk(id int not null auto_increment, nazov varchar(255), typ int, primary key(id))');
+        var result1 = await db.execute('insert into kiosk(nazov, typ) values(?, ?)', ['a3', 1]);
+        console.log('identity1', db.identity);
+        var result2 = await db.execute('insert into kiosk(nazov, typ) values(?, ?)', ['a4', 1]);
+        console.log('identity2', db.identity);
+        var result3 = await db.execute('insert into kiosk(nazov, typ) values(?, ?)', ['a5', 1]);
+        console.log('identity3', db.identity);
+        var q = await db.query('select * from kiosk where id>? order by id', [1]);
+        console.log(q);
+        db.disconnect();
+    })
+    .catch(function(error) {
+        console.log(error.message);
+    });
+```
 ### Property: identity
 Return the last identity fro previous execute.
 
