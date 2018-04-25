@@ -1,6 +1,6 @@
 # mysql-functions
 A simple wrapper for [mysql](https://github.com/mysqljs/mysql) (A pure node.js JavaScript Client implementing the MySql protocol).
-All functions are Promises.
+All functions returns Promise. Use Node.js v.8 or higher with support for async/await.
 
 ## Installation
 From npm.
@@ -71,13 +71,22 @@ db.connect()
         console.log(error.message);
     });
 ```
+
 ### Property: identity
 Return the last identity fro previous execute.
+```javascript
+var result1 = await db.execute('insert into kiosk(nazov, typ) values(?, ?)', ['a3', 1]);
+console.log('identity1', db.identity);
+```
 
 ### Function: query(sql, params)
 Execute the query which returns the result table.
  * `sql` {String} The SQL statement to be executed.
  * `params` {Array[]} An array of arrays containing the [parameter definitions](https://github.com/mysqljs/mysql#performing-queries).
+```javascript
+var q = await db.query('select * from kiosk where id>? order by id', [1]);
+console.log(q);
+```
 
 ### Property: fields
 Return the fields from last query.
