@@ -1,6 +1,6 @@
 {
   "name": "mysql-functions",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/roboulbricht/mysql-functions#readme",
   "dependencies": {
-    "mysql": "^2.15.0"
+    "mysql": "^2.17.1"
   }
 }
