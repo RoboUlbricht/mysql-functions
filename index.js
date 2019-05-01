@@ -10,34 +10,63 @@ module.exports = class TDatabase {
         this.connection = undefined;
         this.last_identity = 0;
         this.last_fields = {}
+        if(this.config.hasOwnProperty('connectionLimit'))
+            this.pool = mysql.createPool(this.config);
     }
 
     ///
     /// Connect to the database
     ///
     connect() {
-        var self = this;
-        return new Promise(function(resolve, reject) {
-            self.connection = mysql.createConnection(self.config);
-            self.connection.connect(function(err) {
-                if(err)
+        return new Promise((resolve, reject) => {
+            this.connection = mysql.createConnection(this.config);
+            this.connection.connect((err) => {
+                if (err)
                     reject(err);
                 else
                     resolve();
             });
-          });
+        });
+    }
+
+    ///
+    /// Connect to the database
+    ///
+    connectPool() {
+        return new Promise((resolve, reject) => {
+            if (this.pool) {
+                this.pool.getConnection((err, connection) => {
+                    if (err)
+                        reject(err);
+                    else {
+                        resolve(connection);
+                    }
+                });
+            }
+            else {
+                reject(new Error('No connection pool.'));
+            }
+        });
     }
 
     ///
     /// Disconnect from the database
     ///
-    disconnect() {
-        if(this.connection) {
-            this.connection.end(function(err) {
-
+    disconnect(con) {
+        if(this.pool && con && con._pool) {
+            con.release();
+        }
+        else if(con) {
+            con.end((err)=> {
             });
         }
-        this.connection = undefined;
+        else {
+            if(this.connection) {
+                this.connection.end((err)=> {
+                });
+            }
+            this.connection = undefined;
+        }
     }
 
     ///
