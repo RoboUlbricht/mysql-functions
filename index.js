@@ -1,5 +1,111 @@
 const mysql = require('mysql');
 
+class TConnection {
+
+    constructor(database, connection) {
+        this.database = database;
+        this.connection = connection;
+        this.last_identity = 0;
+        this.last_fields = {}
+    }
+
+    release() {
+        this.connection.release();
+    }
+
+    ///
+    /// Execute query
+    ///
+    execute(sql, params) {
+        return new Promise((resolve, reject) => {
+            this.connection.query(sql, params, (err, results, fields) => {
+                if(err)
+                    reject(err);
+                else {
+                    this.last_identity = results.insertId;
+                    resolve(results);
+                }
+            });
+        });
+    }
+
+    ///
+    /// Query
+    ///
+    query(sql, params) {
+        return new Promise((resolve, reject) => {
+            this.connection.query(sql, params, (err, results, fields) => {
+                if(err)
+                    reject(err);
+                else {
+                    this.last_fields = fields;
+                    resolve(results);
+                }
+            });
+        });
+    }
+
+    ///
+    /// Get last identity
+    ///
+    get identity() {
+        return this.last_identity;
+    }
+
+    ///
+    /// Get last fields
+    ///
+    get fields() {
+        return this.last_fields;
+    }
+
+    ///
+    /// Begin the transaction
+    ///
+    beginTransaction() {
+        return new Promise((resolve, reject) => {
+            this.connection.beginTransaction((err) => {
+                if(err)
+                    reject(err);
+                else {
+                    resolve();
+                }
+            });
+        });
+    }
+
+    ///
+    /// Commit the transaction
+    ///
+    commitTransaction() {
+        return new Promise((resolve, reject) => {
+            this.connection.commit((err) => {
+                if(err)
+                    reject(err);
+                else {
+                    resolve();
+                }
+            });
+        });
+    }
+
+    ///
+    /// Rollback the transaction
+    ///
+    rollbackTransaction() {
+        return new Promise((resolve, reject) => {
+            this.connection.rollback((err) => {
+                if(err)
+                    reject(err);
+                else {
+                    resolve();
+                }
+            });
+        });
+    }
+
+};
+
 module.exports = class TDatabase {
 
     ///
@@ -39,7 +145,7 @@ module.exports = class TDatabase {
                     if (err)
                         reject(err);
                     else {
-                        resolve(connection);
+                        resolve(new TConnection(this, connection));
                     }
                 });
             }
@@ -53,16 +159,18 @@ module.exports = class TDatabase {
     /// Disconnect from the database
     ///
     disconnect(con) {
-        if(this.pool && con && con._pool) {
+        if (con instanceof TConnection)
+            con.release();
+        else if (this.pool && con && con._pool) {
             con.release();
         }
-        else if(con) {
-            con.end((err)=> {
+        else if (con) {
+            con.end((err) => {
             });
         }
         else {
-            if(this.connection) {
-                this.connection.end((err)=> {
+            if (this.connection) {
+                this.connection.end((err) => {
                 });
             }
             this.connection = undefined;

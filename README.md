@@ -12,6 +12,9 @@ Or from git.
 npm install roboulbricht/mysql-functions
 ```
 
+## class TConnection
+It is created in function TDatabase.connectPool. It has the same functions as TDatabase. You can have many opened TConnection.
+
 ## class TDatabase
 
 ### Function: connect()
@@ -37,6 +40,32 @@ db.connect()
         console.log(error.message);
     });
 ```
+
+### Function: connectPool()
+Establishing the connection to the database.
+
+```javascript
+var Database = require('mysql-functions');
+
+var connection_string = {
+    connectionLimit : 10,
+    host: "localhost",
+    user: "root",
+    password: "password",
+    database: "mydb"
+}
+
+var db = new Database(connection_string);
+db.connectPool()
+    .then((con)=> {
+        console.log('connected');
+        db.disconnect(con); // or con.release();
+    })
+    .catch(function(error) {
+        console.log(error.message);
+    });
+```
+
 ### Function: execute(sql, params)
 Execute the query without returning the result table. Good for insert queries.
  * `sql` {String} The SQL statement to be executed.
