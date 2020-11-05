@@ -111,13 +111,38 @@ module.exports = class TDatabase {
     ///
     /// Constructor
     ///
-    constructor(config) {
+    constructor(config, params) {
         this.config = config;
+        this.params = params;
         this.connection = undefined;
         this.last_identity = 0;
         this.last_fields = {}
         if(this.config.hasOwnProperty('connectionLimit'))
             this.pool = mysql.createPool(this.config);
+    }
+
+    ///
+    /// Log Error
+    ///
+    logError(message) {
+        if(this.params && this.params.logger)
+            this.params.logger.error(message);
+    }
+
+    ///
+    /// Log Info
+    ///
+    logInfo(message) {
+        if(this.params && this.params.logger)
+            this.params.logger.info(message);
+    }
+
+    ///
+    /// Log Debug
+    ///
+    logDebug(message) {
+        if(this.params && this.params.logger)
+            this.params.logger.debug(message);
     }
 
     ///
@@ -127,10 +152,14 @@ module.exports = class TDatabase {
         return new Promise((resolve, reject) => {
             this.connection = mysql.createConnection(this.config);
             this.connection.connect((err) => {
-                if (err)
+                if (err) {
+                    this.logError(err.message);
                     reject(err);
-                else
+                }
+                else {
+                    this.logInfo('TDatabase.Connected');
                     resolve();
+                }
             });
         });
     }
@@ -171,6 +200,10 @@ module.exports = class TDatabase {
         else {
             if (this.connection) {
                 this.connection.end((err) => {
+                    if(err)
+                        this.logError(err.message);
+                    else
+                        this.logDebug('TDatabase.Disconnected')
                 });
             }
             this.connection = undefined;
@@ -198,13 +231,20 @@ module.exports = class TDatabase {
     /// Query
     ///
     query(sql, params) {
-        var self = this;
-        return new Promise(function(resolve, reject) {
-            self.connection.query(sql, params, function(err, results, fields) {
-                if(err)
+        this.logDebug('TDatabase.query: ' + sql);
+        if(params)
+            params.forEach((param) => this.logDebug(` - ${param}`));
+        let hrstart = process.hrtime();
+        return new Promise((resolve, reject) => {
+            this.connection.query(sql, params, (err, results, fields) => {
+                if(err) {
+                    this.logError(err.message);
                     reject(err);
+                }
                 else {
-                    self.last_fields = fields;
+                    let hrend = process.hrtime(hrstart);
+                    this.logDebug(`Count: ${results.length}, (${hrend[0]}s ${hrend[1] / 1000000 | 0}ms)`);
+                    this.last_fields = fields;
                     resolve(results);
                 }
             });
